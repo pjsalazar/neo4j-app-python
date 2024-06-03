@@ -6,6 +6,7 @@ from api.dao.ratings import RatingDAO
 
 movie_routes = Blueprint("movies", __name__, url_prefix="/api/movies")
 
+
 # tag::list[]
 @movie_routes.get('/')
 @jwt_required(optional=True)

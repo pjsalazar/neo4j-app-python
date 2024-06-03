@@ -16,14 +16,33 @@ class MovieDAO:
      parameter and limited to the number passed as `limit`.  The `skip` variable should be
      used to skip a certain number of rows.
 
-     If a user_id value is suppled, a `favorite` boolean property should be returned to
+     If a user_id value is supplied, a `favorite` boolean property should be returned to
      signify whether the user has added the movie to their "My Favorites" list.
     """
     # tag::all[]
     def all(self, sort, order, limit=6, skip=0, user_id=None):
-        # TODO: Get list from movies from Neo4j
-        return popular
+        def get_movies(tx, sort, order, limit=6, skip=0, user_id=None):
+            # Define the cypher statement
+            cypher = """
+                MATCH (m:Movie)
+                WHERE m.`{0}` IS NOT NULL
+                RETURN m {{ .* }} AS movie
+                ORDER BY m.`{0}` {1}
+                SKIP $skip
+                LIMIT $limit
+            """.format(sort, order)
+
+            # Run the statement within the transaction passed as the first argument
+            result = tx.run(cypher, limit=limit, skip=skip, user_id=user_id)
+
+            # Extract a list of Movies from the Result
+            return [row.value("movie") for row in result]
+
+        # execute read transaction within a context manager
+        with self.driver.session() as session:
+            return session.execute_read(get_movies, sort, order, limit, skip, user_id)
     # end::all[]
+
 
     """
     This method should return a paginated list of movies that have a relationship to the

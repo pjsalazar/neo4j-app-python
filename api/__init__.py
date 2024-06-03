@@ -8,8 +8,7 @@ from flask.helpers import send_from_directory
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
-from api.exceptions.notfound import NotFoundException
-
+from .exceptions.notfound import NotFoundException
 from .exceptions.badrequest import BadRequestException
 from .exceptions.validation import ValidationException
 
