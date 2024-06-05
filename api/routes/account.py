@@ -6,10 +6,12 @@ from api.dao.ratings import RatingDAO
 
 account_routes = Blueprint("account", __name__, url_prefix="/api/account")
 
+
 @account_routes.route('/', methods=['GET'])
 @jwt_required()
 def get_profile():
     return jsonify(current_user)
+
 
 @account_routes.route('/favorites', methods=['GET'])
 @jwt_required()
@@ -29,6 +31,7 @@ def get_favorites():
     output = dao.all(user_id, sort, order, limit, skip)
 
     return jsonify(output)
+
 
 @account_routes.route('/favorites/<movie_id>', methods=['POST', 'DELETE'])
 @jwt_required()
